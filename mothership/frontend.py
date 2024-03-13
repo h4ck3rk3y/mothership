@@ -38,11 +38,25 @@ def run():
         """)
 
         st.write("## Launch a bot now")
-    
-    open_ai_api_key = st.text_input("OpenAI API Key", type="password")
-    telegram_bot_token = st.text_input("Telegram Bot Token", type="password")
+
+    with st.form("new_bot"):
+        st.write("### Required")
+        open_ai_api_key = st.text_input("OpenAI API Key", type="password")
+        telegram_bot_token = st.text_input("Telegram Bot Token", type="password")
+        system_prompt = st.text_area("The prompt on which the bot should operate be as specific as possible", value="You are a helpful assistant.")
+        bot_language = st.selectbox("Language for the bots general messages", ["en", "de", "ru", "it", "fi", "es", "id", "nl", "zh-cn", "vi", "fa", "pt-br", "uk"])
+
+        st.divider()
+        st.write("### Optional")
+        admin_user_ids = st.text_input("Comma separated admin user ids; not required", value = "")
+        allowed_user_ids  = st.text_input("Allowed user ids; defaults to '*' to allow all", value="*")
+        open_ai_model  = st.text_input("The OpenAI model to use for the bot", value="gpt-3.5-turbo")
 
 
+        # Every form must have a submit button.
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            st.write("Thank you we are launching your bot!")
 
 if __name__ == "__main__":
     run()
