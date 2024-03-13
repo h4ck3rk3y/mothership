@@ -14,6 +14,7 @@
 
 import streamlit as st
 from streamlit.logger import get_logger
+from run_bot import run_bot
 
 LOGGER = get_logger(__name__)
 
@@ -56,7 +57,15 @@ def run():
         # Every form must have a submit button.
         submitted = st.form_submit_button("Submit")
         if submitted:
+            if open_ai_api_key == "" or telegram_bot_token == "" or system_prompt == "":
+                st.error("Required fields were not filled")
+                return
             st.write("Thank you we are launching your bot!")
+            exit_code, output = run_bot(open_ai_api_key, telegram_bot_token, system_prompt, bot_language, admin_user_ids, admin_user_ids, open_ai_model)
+            if exit_code != 0:
+                st.error(output)
+            else:
+                st.write("Your bot is alive and running")
 
 if __name__ == "__main__":
     run()
