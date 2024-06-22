@@ -15,12 +15,13 @@ HEADERS = {
 def launch_bot(bot):
     bot_id = bot.id
     assistant_prompt = bot.system_prompt
+    bot_token = bot.token
     try:
         name = f"BOT_{bot_id}"
         secret_name = f"BOT_TOKEN_{bot_id}"
         
         # Create secret (assuming this function is defined elsewhere)
-        create_secret()
+        create_secret(secret_name, bot_token)
 
         service_name = f"bot-{bot_id}"
         service_data = {
