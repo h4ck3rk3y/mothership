@@ -17,6 +17,9 @@ def launch_bot(bot):
     assistant_prompt = bot.system_prompt
     try:
         name = f"BOT_{bot_id}"
+        secret_name = f"BOT_TOKEN_{bot_id}"
+        
+        # Create secret (assuming this function is defined elsewhere)
         create_secret()
 
         service_name = f"bot-{bot_id}"
@@ -36,15 +39,31 @@ def launch_bot(bot):
                 "docker": {"image": DOCKER_IMAGE},
             },
         }
+        
         service_response = requests.post(
             f"{KOYEB_API_URL}/services", headers=HEADERS, json=service_data
         )
         service_response.raise_for_status()
         service_json = service_response.json()
         return True, service_json["id"]
-
+    
     except requests.exceptions.RequestException as e:
-        return False, ""
+        error_detail = str(e)
+        if e.response is not None:
+            status_code = e.response.status_code
+            try:
+                error_json = e.response.json()
+                error_detail = f"Status {status_code}: {error_json.get('message', 'Unknown error')}"
+            except ValueError:
+                error_detail = f"Status {status_code}: {e.response.text}"
+        
+        print(f"Error launching bot {bot_id}: {error_detail}")
+        return False, f"Error: {error_detail}"
+    
+    except Exception as e:
+        error_detail = f"Unexpected error: {str(e)}"
+        print(f"Error launching bot {bot_id}: {error_detail}")
+        return False, f"Error: {error_detail}"
 
 
 def create_secret(name, value):
