@@ -73,7 +73,7 @@ def create_bot():
     db.session.add(new_bot)
     db.session.commit()
 
-    success = launch_bot(new_bot)
+    success, service_id = launch_bot(new_bot)
 
     if success:
         return jsonify({"message": "Bot created and launched successfully"}), 201
