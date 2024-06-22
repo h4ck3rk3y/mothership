@@ -10,6 +10,8 @@ from flask_jwt_extended import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from .models import Bot, User
+from .bot import launch_bot
 
 app = Flask(__name__)
 app.config[
@@ -21,21 +23,6 @@ app.config["JWT_SECRET_KEY"] = "81FB3577-799E-4BAE-AF9B-EC4E1623B8D9"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
-
-
-# Models
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(120), nullable=False)
-
-
-class Bot(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    token = db.Column(db.String(120), nullable=False)
-    system_prompt = db.Column(db.Text, nullable=False)
-    alias = db.Column(db.String(80), nullable=False)
 
 
 # Routes
@@ -73,8 +60,7 @@ def create_bot():
     db.session.add(new_bot)
     db.session.commit()
 
-    # Call the launch_bot function (you'll need to implement this)
-    success = launch_bot(new_bot.id)
+    success = launch_bot(new_bot)
 
     if success:
         return jsonify({"message": "Bot created and launched successfully"}), 201
