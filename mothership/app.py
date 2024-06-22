@@ -16,9 +16,9 @@ from .bot import launch_bot
 app = Flask(__name__)
 app.config[
     "SQLALCHEMY_DATABASE_URI"
-] = "postgresql://username:password@localhost/dbname"
+] = os.environ["PG"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_SECRET_KEY"] = "81FB3577-799E-4BAE-AF9B-EC4E1623B8D9"
+app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
