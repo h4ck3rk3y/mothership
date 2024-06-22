@@ -10,18 +10,18 @@ from flask_jwt_extended import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-from .models import Bot, User
+import requests
+from .bot import launch_bot, get_service_status
 
 app = Flask(__name__)
-app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = os.environ["PG"]
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["PG_DB"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
+
 
 # Models
 class User(db.Model):
@@ -36,6 +36,7 @@ class Bot(db.Model):
     token = db.Column(db.String(120), nullable=False)
     system_prompt = db.Column(db.Text, nullable=False)
     alias = db.Column(db.String(80), nullable=False)
+    service_id = db.Column(db.String(120), nullable=True)
 
 
 # Routes
@@ -76,6 +77,8 @@ def create_bot():
     success, service_id = launch_bot(new_bot)
 
     if success:
+        new_bot.service_id = service_id
+        db.session.commit()
         return jsonify({"message": "Bot created and launched successfully"}), 201
     else:
         return jsonify({"message": "Bot created but failed to launch"}), 500
@@ -86,20 +89,21 @@ def create_bot():
 def get_bots():
     current_user_id = get_jwt_identity()
     bots = Bot.query.filter_by(user_id=current_user_id).all()
-    return (
-        jsonify(
-            [
-                {
-                    "id": bot.id,
-                    "token": bot.token,
-                    "system_prompt": bot.system_prompt,
-                    "alias": bot.alias,
-                }
-                for bot in bots
-            ]
-        ),
-        200,
-    )
+    bot_list = []
+    for bot in bots:
+        status = (
+            get_service_status(bot.service_id) if bot.service_id else "Not deployed"
+        )
+        bot_list.append(
+            {
+                "id": bot.id,
+                "token": bot.token,
+                "system_prompt": bot.system_prompt,
+                "alias": bot.alias,
+                "status": status,
+            }
+        )
+    return jsonify(bot_list), 200
 
 
 if __name__ == "__main__":

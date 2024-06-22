@@ -8,7 +8,7 @@ KOYEB_APP_ID = "c02d59cd-c3f5-4568-b647-b43d8db925a5"
 
 HEADERS = {
     "Authorization": f"Bearer {KOYEB_API_KEY}",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
 }
 
 
@@ -30,14 +30,14 @@ def launch_bot(bot):
                 "env": [
                     {"key": "ASSISTANT_PROMPT", "value": assistant_prompt},
                     {"key": "TELEGRAM_BOT_TOKEN", "secret": secret_name},
-                    {"key": "OPEN_AI_API_KEY", "secret": "OPEN_AI_API_KEY"}
+                    {"key": "OPEN_AI_API_KEY", "secret": "OPEN_AI_API_KEY"},
                 ],
-                "docker": {
-                    "image": DOCKER_IMAGE
-                }
-            }
+                "docker": {"image": DOCKER_IMAGE},
+            },
         }
-        service_response = requests.post(f"{KOYEB_API_URL}/services", headers=headers, json=service_data)
+        service_response = requests.post(
+            f"{KOYEB_API_URL}/services", headers=HEADERS, json=service_data
+        )
         service_response.raise_for_status()
         service_json = service_response.json()
         return True, service_json["id"]
@@ -47,9 +47,19 @@ def launch_bot(bot):
 
 
 def create_secret(name, value):
-    data = {
-        "name": name,
-        "value": value
-    }
+    data = {"name": name, "value": value}
     resp = requests.get(f"{KOYEB_API}/secets", headers=HEADERS, json=data)
     resp.raise_for_status()
+
+
+def get_service_status(service_id):
+    try:
+        response = requests.get(
+            f"{KOYEB_API_URL}/services/{service_id}", headers=HEADERS
+        )
+        response.raise_for_status()
+        service_data = response.json()
+        return service_data.get("status", "Unknown")
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching service status: {str(e)}")
+        return "Unknown"
