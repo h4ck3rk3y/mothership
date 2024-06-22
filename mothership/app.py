@@ -11,7 +11,6 @@ from flask_jwt_extended import (
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from .models import Bot, User
-from .bot import launch_bot
 
 app = Flask(__name__)
 app.config[
@@ -23,6 +22,20 @@ app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
+
+# Models
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(120), nullable=False)
+
+
+class Bot(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    token = db.Column(db.String(120), nullable=False)
+    system_prompt = db.Column(db.Text, nullable=False)
+    alias = db.Column(db.String(80), nullable=False)
 
 
 # Routes
