@@ -25,7 +25,8 @@ def launch_bot(bot):
             "definition": {
                 "name": service_name,
                 "type": "WORKER",
-                "instance_types": ["nano"],
+                "instance_types": ["free"],
+                "regions": ["FRA"],
                 "scalings": [{"min": 1, "max": 1}],
                 "env": [
                     {"key": "ASSISTANT_PROMPT", "value": assistant_prompt},
