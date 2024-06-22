@@ -19,7 +19,7 @@ def launch_bot(bot):
     try:
         name = f"BOT_{bot_id}"
         secret_name = f"BOT_TOKEN_{bot_id}"
-        
+
         # Create secret (assuming this function is defined elsewhere)
         create_secret(secret_name, bot_token)
 
@@ -28,39 +28,50 @@ def launch_bot(bot):
             "app_id": KOYEB_APP_ID,
             "definition": {
                 "name": service_name,
-                "type": "WORKER",
-                "instance_types": ["free"],
-                "regions": ["FRA"],
+                "type": "WORKER",  # Make sure this is a valid type, not "INVALID"
+                "instance_types": [{"type": "eco-nano"}],
+                "regions": ["fra"],  # Lowercase to match typical region codes
                 "scalings": [{"min": 1, "max": 1}],
                 "env": [
                     {"key": "ASSISTANT_PROMPT", "value": assistant_prompt},
                     {"key": "TELEGRAM_BOT_TOKEN", "secret": secret_name},
-                    {"key": "OPEN_AI_API_KEY", "secret": "OPEN_AI_API_KEY"},
+                    {"key": "OPENAI_API_KEY", "secret": "OPEN_AI_API_KEY"},
                 ],
                 "docker": {"image": DOCKER_IMAGE},
+                # Add required fields even if they're empty
+                "routes": [],
+                "ports": [],
+                "health_checks": [],
+                "volumes": [],
             },
         }
-        
+
         service_response = requests.post(
-            f"{KOYEB_API_URL}/services", headers=HEADERS, json=service_data
+            f"{KOYEB_API}/services", headers=HEADERS, json=service_data
         )
+
+        if service_response.status_code == 400:
+            error_detail = service_response.json()
+            print(f"Koyeb API 400 Error: {error_detail}")
+            return False, f"Koyeb API Error: {error_detail}"
+
         service_response.raise_for_status()
         service_json = service_response.json()
-        return True, service_json["id"]
-    
+        print(service_json)
+        return True, service_json["service"]["id"]
+
     except requests.exceptions.RequestException as e:
         error_detail = str(e)
         if e.response is not None:
-            status_code = e.response.status_code
             try:
                 error_json = e.response.json()
-                error_detail = f"Status {status_code}: {error_json.get('message', 'Unknown error')}"
+                error_detail = f"Status {e.response.status_code}: {error_json}"
             except ValueError:
-                error_detail = f"Status {status_code}: {e.response.text}"
-        
+                error_detail = f"Status {e.response.status_code}: {e.response.text}"
+
         print(f"Error launching bot {bot_id}: {error_detail}")
         return False, f"Error: {error_detail}"
-    
+
     except Exception as e:
         error_detail = f"Unexpected error: {str(e)}"
         print(f"Error launching bot {bot_id}: {error_detail}")
@@ -69,18 +80,17 @@ def launch_bot(bot):
 
 def create_secret(name, value):
     data = {"name": name, "value": value}
-    resp = requests.get(f"{KOYEB_API}/secets", headers=HEADERS, json=data)
+    resp = requests.post(f"{KOYEB_API}/secrets", headers=HEADERS, json=data)
     resp.raise_for_status()
+    print(f"Succesfully created secret {name}")
 
 
 def get_service_status(service_id):
     try:
-        response = requests.get(
-            f"{KOYEB_API_URL}/services/{service_id}", headers=HEADERS
-        )
+        response = requests.get(f"{KOYEB_API}/services/{service_id}", headers=HEADERS)
         response.raise_for_status()
         service_data = response.json()
-        return service_data.get("status", "Unknown")
+        return service_data["service"].get("status", "Unknown")
     except requests.exceptions.RequestException as e:
         print(f"Error fetching service status: {str(e)}")
         return "Unknown"
