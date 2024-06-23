@@ -94,3 +94,7 @@ def get_service_status(service_id):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching service status: {str(e)}")
         return "Unknown"
+
+
+def update_bot_on_koyeb(bot):
+    raise Exception("Unimplemented error")
