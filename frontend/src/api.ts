@@ -46,7 +46,8 @@ export const getBotInfo = async (): Promise<BotData> => {
 };
 
 export const createBot = async (botData: CreateBotData): Promise<BotData> => {
-  const response = await api.post<BotData>('/bot', botData);
+  await api.post<BotData>('/bot', botData);
+  const response = await api.get<BotData>('/bot');
   return response.data;
 };
 

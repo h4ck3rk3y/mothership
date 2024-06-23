@@ -45,11 +45,11 @@ const DashboardPage: React.FC = () => {
       const newBot = await createBot(botData);
       setBot(newBot);
       setError(null);
+      setLoading(false); // Move setLoading(false) here
     } catch (error) {
       setError('Error creating bot. Please try again.');
       console.error('Error creating bot:', error);
-    } finally {
-      setLoading(false);
+      setLoading(false); // Also setLoading(false) in case of error
     }
   };
 
@@ -57,13 +57,10 @@ const DashboardPage: React.FC = () => {
     return <div className="text-center">Loading...</div>;
   }
 
-  if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
-  }
-
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8">Your Dashboard</h1>
+      {error && <div className="text-center text-red-500 mb-4">{error}</div>}
       {bot ? (
         <BotStatus bot={bot} />
       ) : (
