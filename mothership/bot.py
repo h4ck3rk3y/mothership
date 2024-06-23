@@ -13,17 +13,14 @@ HEADERS = {
 
 
 def launch_bot(bot, name_suffix):
-    name_suffix = bot.id
     assistant_prompt = bot.system_prompt
     bot_token = bot.token
     try:
-        name = f"BOT_{name_suffix}"
-        secret_name = f"BOT_TOKEN_{name_suffix}"
-
-        # Create secret (assuming this function is defined elsewhere)
+        secret_name = f"bot-token-{name_suffix}"
         create_secret(secret_name, bot_token)
 
         service_name = f"bot-{name_suffix}"
+        print(f"launching bot with name {service_name}")
         service_data = {
             "app_id": KOYEB_APP_ID,
             "definition": {

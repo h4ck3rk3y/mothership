@@ -92,7 +92,7 @@ def create_bot():
 
     uuid_suffix = str(uuid.uuid4())[-12:]
     new_bot.suffix = uuid_suffix
-    name_suffix = f"{user.id}_{new_bot.aias}_{uuid_suffix}"
+    name_suffix = f"{user.id}-{new_bot.alias}-{uuid_suffix}".lower()
     success, service_id = launch_bot(new_bot, name_suffix)
 
     if success and service_id:
@@ -120,7 +120,6 @@ def get_bot():
         jsonify(
             {
                 "id": bot.id,
-                "token": bot.token,
                 "system_prompt": bot.system_prompt,
                 "alias": bot.alias,
                 "status": status,
