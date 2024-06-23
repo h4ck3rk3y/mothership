@@ -19,6 +19,7 @@ interface BotFormData {
 const DashboardPage: React.FC = () => {
   const [bot, setBot] = useState<Bot | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBotInfo();
@@ -27,8 +28,9 @@ const DashboardPage: React.FC = () => {
   const fetchBotInfo = async () => {
     try {
       const botData = await getBotInfo();
-      setBot(botData);
+      setBot(Object.keys(botData).length === 0 ? null : botData);
     } catch (error) {
+      setError('Error fetching bot info. Please try again later.');
       console.error('Error fetching bot info:', error);
     } finally {
       setLoading(false);
@@ -40,6 +42,7 @@ const DashboardPage: React.FC = () => {
       const newBot = await createBot(botData);
       setBot(newBot);
     } catch (error) {
+      setError('Error creating bot. Please try again.');
       console.error('Error creating bot:', error);
     }
   };
@@ -48,13 +51,20 @@ const DashboardPage: React.FC = () => {
     return <div className="text-center">Loading...</div>;
   }
 
+  if (error) {
+    return <div className="text-center text-red-500">{error}</div>;
+  }
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8">Your Dashboard</h1>
       {bot ? (
         <BotStatus bot={bot} />
       ) : (
-        <BotForm onSubmit={handleCreateBot} />
+        <>
+          <p className="mb-4">You don't have a bot yet. Create one now!</p>
+          <BotForm onSubmit={handleCreateBot} />
+        </>
       )}
     </div>
   );
