@@ -11,6 +11,7 @@ from flask_jwt_extended import (
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from .bot import launch_bot, get_service_status, update_bot_on_koyeb
+import uuid
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["PG_DB"]
@@ -41,6 +42,7 @@ class Bot(db.Model):
     system_prompt = db.Column(db.Text, nullable=False)
     alias = db.Column(db.String(80), nullable=False)
     service_id = db.Column(db.String(120), nullable=False)
+    suffix = db.Column(db.String(12), nullable=False)
     user = db.relationship("User", back_populates="bot")
 
 
@@ -88,7 +90,10 @@ def create_bot():
         alias=data["alias"],
     )
 
-    success, service_id = launch_bot(new_bot)
+    uuid_suffix = str(uuid.uuid4())[-12:]
+    new_bot.suffix = uuid_suffix
+    name_suffix = f"{user.id}_{new_bot.aias}_{uuid_suffix}"
+    success, service_id = launch_bot(new_bot, name_suffix)
 
     if success and service_id:
         new_bot.service_id = service_id
