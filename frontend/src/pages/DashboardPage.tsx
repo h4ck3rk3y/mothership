@@ -27,8 +27,10 @@ const DashboardPage: React.FC = () => {
 
   const fetchBotInfo = async () => {
     try {
+      setLoading(true);
       const botData = await getBotInfo();
       setBot(Object.keys(botData).length === 0 ? null : botData);
+      setError(null);
     } catch (error) {
       setError('Error fetching bot info. Please try again later.');
       console.error('Error fetching bot info:', error);
@@ -39,11 +41,15 @@ const DashboardPage: React.FC = () => {
 
   const handleCreateBot = async (botData: BotFormData) => {
     try {
+      setLoading(true);
       const newBot = await createBot(botData);
       setBot(newBot);
+      setError(null);
     } catch (error) {
       setError('Error creating bot. Please try again.');
       console.error('Error creating bot:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
