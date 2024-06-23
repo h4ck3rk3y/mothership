@@ -1,5 +1,6 @@
 import os
 import requests
+import logging
 
 KOYEB_API_KEY = os.environ["KOYEB_API_KEY"]
 KOYEB_API = "https://app.koyeb.com/v1"
@@ -11,6 +12,9 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
+# Set up logger
+logger = logging.getLogger(__name__)
+
 
 def launch_bot(bot, name_suffix):
     assistant_prompt = bot.system_prompt
@@ -20,14 +24,14 @@ def launch_bot(bot, name_suffix):
         create_secret(secret_name, bot_token)
 
         service_name = f"bot-{name_suffix}"
-        print(f"launching bot with name {service_name}")
+        logger.info(f"Launching bot with name {service_name}")
         service_data = {
             "app_id": KOYEB_APP_ID,
             "definition": {
                 "name": service_name,
-                "type": "WORKER",  # Make sure this is a valid type, not "INVALID"
+                "type": "WORKER",
                 "instance_types": [{"type": "eco-nano"}],
-                "regions": ["fra"],  # Lowercase to match typical region codes
+                "regions": ["fra"],
                 "scalings": [{"min": 1, "max": 1}],
                 "env": [
                     {"key": "ASSISTANT_PROMPT", "value": assistant_prompt},
@@ -35,7 +39,6 @@ def launch_bot(bot, name_suffix):
                     {"key": "OPENAI_API_KEY", "secret": "OPEN_AI_API_KEY"},
                 ],
                 "docker": {"image": DOCKER_IMAGE},
-                # Add required fields even if they're empty
                 "routes": [],
                 "ports": [],
                 "health_checks": [],
@@ -49,12 +52,12 @@ def launch_bot(bot, name_suffix):
 
         if service_response.status_code == 400:
             error_detail = service_response.json()
-            print(f"Koyeb API 400 Error: {error_detail}")
+            logger.error(f"Koyeb API 400 Error: {error_detail}")
             return False, f"Koyeb API Error: {error_detail}"
 
         service_response.raise_for_status()
         service_json = service_response.json()
-        print(service_json)
+        logger.debug(f"Service creation response: {service_json}")
         return True, service_json["service"]["id"]
 
     except requests.exceptions.RequestException as e:
@@ -66,12 +69,12 @@ def launch_bot(bot, name_suffix):
             except ValueError:
                 error_detail = f"Status {e.response.status_code}: {e.response.text}"
 
-        print(f"Error launching bot {bot_id}: {error_detail}")
+        logger.error(f"Error launching bot: {error_detail}")
         return False, f"Error: {error_detail}"
 
     except Exception as e:
         error_detail = f"Unexpected error: {str(e)}"
-        print(f"Error launching bot {bot_id}: {error_detail}")
+        logger.error(f"Error launching bot: {error_detail}")
         return False, f"Error: {error_detail}"
 
 
@@ -79,7 +82,7 @@ def create_secret(name, value):
     data = {"name": name, "value": value}
     resp = requests.post(f"{KOYEB_API}/secrets", headers=HEADERS, json=data)
     resp.raise_for_status()
-    print(f"Succesfully created secret {name}")
+    logger.info(f"Successfully created secret {name}")
 
 
 def get_service_status(service_id):
@@ -89,7 +92,7 @@ def get_service_status(service_id):
         service_data = response.json()
         return service_data["service"].get("status", "Unknown")
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching service status: {str(e)}")
+        logger.error(f"Error fetching service status: {str(e)}")
         return "Unknown"
 
 
