@@ -16,7 +16,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"testpassword\"\n}"
+					"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"testpassword\",\n    \"invite_code\": \"BOTS-WILL-TAKEOVER\"\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/signup",
@@ -73,18 +73,18 @@
 					"raw": "{\n    \"token\": \"bot_token_from_telegram\",\n    \"system_prompt\": \"You are a helpful assistant\",\n    \"alias\": \"MyTestBot\"\n}"
 				},
 				"url": {
-					"raw": "{{baseUrl}}/create_bot",
+					"raw": "{{baseUrl}}/bot",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"create_bot"
+						"bot"
 					]
 				}
 			}
 		},
 		{
-			"name": "Get Bots",
+			"name": "Get Bot",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -94,12 +94,41 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/bots",
+					"raw": "{{baseUrl}}/bot",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"bots"
+						"bot"
+					]
+				}
+			}
+		},
+		{
+			"name": "Edit Bot",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"token\": \"new_bot_token_from_telegram\",\n    \"system_prompt\": \"You are an even more helpful assistant\",\n    \"alias\": \"MyUpdatedTestBot\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/bot",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"bot"
 					]
 				}
 			}
