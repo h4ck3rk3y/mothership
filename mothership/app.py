@@ -14,8 +14,11 @@ from .bot import launch_bot, get_service_status, update_bot_on_koyeb
 import uuid
 import logging
 from datetime import timedelta
+from flask_cors import CORS
 
 app = Flask(__name__)
+# this probably could use some hardening
+CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["PG_DB"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]

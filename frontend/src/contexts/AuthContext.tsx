@@ -1,15 +1,15 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { login as apiLogin } from '../api';
+import { login as apiLogin, signup as apiSignup } from '../api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   login: (username: string, password: string) => Promise<void>;
+  signup: (username: string, password: string, inviteCode: string) => Promise<void>;
   logout: () => void;
 }
 
 interface User {
-  id: string;
   username: string;
 }
 
@@ -34,9 +34,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // You might want to validate the token here
       setIsAuthenticated(true);
-      // Fetch user data if needed
+      // You might want to validate the token here
     }
   }, []);
 
@@ -45,10 +44,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiLogin(username, password);
       localStorage.setItem('token', response.access_token);
       setIsAuthenticated(true);
-      // You might want to fetch and set user data here
-      setUser({ id: '1', username }); // This is a placeholder, replace with actual user data
+      setUser({ username });
     } catch (error) {
       console.error('Login failed:', error);
+      throw error;
+    }
+  };
+
+  const signup = async (username: string, password: string, inviteCode: string) => {
+    try {
+      await apiSignup(username, password, inviteCode);
+      // After successful signup, log the user in
+      await login(username, password);
+    } catch (error) {
+      console.error('Signup failed:', error);
       throw error;
     }
   };
@@ -63,6 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     user,
     login,
+    signup,
     logout
   };
 
