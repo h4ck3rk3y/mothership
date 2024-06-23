@@ -12,7 +12,6 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
-# Set up logger
 logger = logging.getLogger(__name__)
 
 
@@ -90,6 +89,7 @@ def get_service_status(service_id):
         response = requests.get(f"{KOYEB_API}/services/{service_id}", headers=HEADERS)
         response.raise_for_status()
         service_data = response.json()
+        logger.info(f"Retrieveid status for {service_id}")
         return service_data["service"].get("status", "Unknown")
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching service status: {str(e)}")

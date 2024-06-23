@@ -22,8 +22,19 @@ app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=7)  # JWT lasts for a week
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S %z",
+)
+
 logger = logging.getLogger(__name__)
+
+# Ensure all loggers use the same format
+for name in logging.root.manager.loggerDict:
+    logging.getLogger(name).handlers = []
+    logging.getLogger(name).propagate = True
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
