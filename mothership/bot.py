@@ -36,6 +36,8 @@ def launch_bot(bot, name_suffix):
                     {"key": "ASSISTANT_PROMPT", "value": assistant_prompt},
                     {"key": "TELEGRAM_BOT_TOKEN", "secret": secret_name},
                     {"key": "OPENAI_API_KEY", "secret": "OPEN_AI_API_KEY"},
+                    {"key": "BUDGET_PERIOD", "value": "monthly"},
+                    {"key": "USER_BUDGET", "value": "5.00"},
                 ],
                 "docker": {"image": DOCKER_IMAGE},
                 "routes": [],
