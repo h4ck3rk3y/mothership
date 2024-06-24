@@ -6,23 +6,26 @@ const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <header className="bg-gray-800 text-white py-4">
+    <header className="bg-gray-900 text-white py-4 shadow-md">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold flex items-center">
-          <img src="/ufo.png" alt="UFO" className="w-8 h-8 mr-2" />
-          Mothership
+          <img src="/ufo.png" alt="MotherShip" className="w-10 h-10 mr-2" />
+          MotherShip
         </Link>
-        <nav>
+        <nav className="flex items-center space-x-6">
+          <Link to="/features" className="hover:text-blue-400 transition-colors">Features</Link>
+          <Link to="/pricing" className="hover:text-blue-400 transition-colors">Pricing</Link>
+          <Link to="/docs" className="hover:text-blue-400 transition-colors">Docs</Link>
           {isAuthenticated ? (
-            <div className="flex items-center space-x-4">
-              <Link to="/dashboard" className="hover:text-gray-300">Dashboard</Link>
-              <button onClick={logout} className="hover:text-gray-300">Logout</button>
-            </div>
+            <>
+              <Link to="/dashboard" className="hover:text-blue-400 transition-colors">Dashboard</Link>
+              <button onClick={logout} className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors">Logout</button>
+            </>
           ) : (
-            <div className="space-x-4">
-              <Link to="/login" className="hover:text-gray-300">Login</Link>
-              <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Sign Up</Link>
-            </div>
+            <>
+              <Link to="/login" className="hover:text-blue-400 transition-colors">Login</Link>
+              <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-colors">Sign Up</Link>
+            </>
           )}
         </nav>
       </div>
