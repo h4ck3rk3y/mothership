@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface CardProps {
@@ -15,19 +15,24 @@ const Card: React.FC<CardProps> = ({ title, children }) => (
 
 interface TestimonialProps {
   name: string;
-  company: string;
   children: React.ReactNode;
 }
 
-const Testimonial: React.FC<TestimonialProps> = ({ name, company, children }) => (
+const Testimonial: React.FC<TestimonialProps> = ({ name, children }) => (
   <div className="bg-gray-800 p-6 rounded-lg shadow-md">
     <p className="italic mb-4">"{children}"</p>
     <p className="font-semibold">{name}</p>
-    <p className="text-sm text-gray-400">{company}</p>
   </div>
 );
 
 const IndexPage: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleWIPClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <main className="container mx-auto px-4 py-16">
@@ -61,8 +66,8 @@ const IndexPage: React.FC = () => {
           <div className="grid md:grid-cols-4 gap-8">
             {[
               "Sign up for a MotherShip account",
-              "Create your custom GPT assistant",
               "Connect it to Telegram",
+              "Create your custom GPT assistant",
               "Share with friends and start chatting!"
             ].map((step, index) => (
               <div key={index}>
@@ -79,14 +84,14 @@ const IndexPage: React.FC = () => {
         <div className="mb-16">
           <h2 className="text-3xl font-bold mb-8 text-center">What Our Users Say</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Testimonial name="Alex Johnson" company="TechStart Inc.">
-              MotherShip made it incredibly easy to deploy our custom AI assistant. Our team productivity skyrocketed!
+            <Testimonial name="Alex">
+              MotherShip made it so easy to create my own AI assistant. I use it every day for task management!
             </Testimonial>
-            <Testimonial name="Sarah Lee" company="Creative Solutions">
-              The ability to share our AI with clients on Telegram has been a game-changer for our business.
+            <Testimonial name="Sarah">
+              I love how I can customize my AI to fit my needs. It's like having a personal assistant in my pocket.
             </Testimonial>
-            <Testimonial name="Mike Brown" company="Data Insights Co.">
-              Affordable, powerful, and user-friendly. MotherShip is everything we needed in an AI platform.
+            <Testimonial name="Mike">
+              Sharing my AI with friends has been a blast. We're always finding new ways to use it together.
             </Testimonial>
           </div>
         </div>
@@ -96,7 +101,7 @@ const IndexPage: React.FC = () => {
           <h2 className="text-3xl font-bold mb-8">Simple, Transparent Pricing</h2>
           <p className="text-xl mb-4">$10/month per bot after your 7-day free trial</p>
           <p className="mb-8">Includes 100 OpenAI API credits monthly. Additional credits available at cost.</p>
-          <Link to="/pricing" className="text-blue-400 hover:underline">View detailed pricing</Link>
+          <a href="#" onClick={handleWIPClick} className="text-blue-400 hover:underline">View detailed pricing</a>
         </div>
 
         {/* FAQ Preview */}
@@ -114,7 +119,7 @@ const IndexPage: React.FC = () => {
             </Card>
           </div>
           <div className="text-center mt-8">
-            <Link to="/faq" className="text-blue-400 hover:underline">View all FAQs</Link>
+            <a href="#" onClick={handleWIPClick} className="text-blue-400 hover:underline">View all FAQs</a>
           </div>
         </div>
 
@@ -126,6 +131,19 @@ const IndexPage: React.FC = () => {
           </Link>
         </div>
       </main>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
+            <h2 className="text-2xl font-bold mb-4">🚧 Work in Progress 🚧</h2>
+            <p>This feature is coming soon! We're working hard to bring you the best experience.</p>
+            <button onClick={() => setShowModal(false)} className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-colors">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

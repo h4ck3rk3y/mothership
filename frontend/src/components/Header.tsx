@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleWIPClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
 
   return (
     <header className="bg-gray-900 text-white py-4 shadow-md">
@@ -13,9 +19,8 @@ const Header: React.FC = () => {
           MotherShip
         </Link>
         <nav className="flex items-center space-x-6">
-          <Link to="/features" className="hover:text-blue-400 transition-colors">Features</Link>
-          <Link to="/pricing" className="hover:text-blue-400 transition-colors">Pricing</Link>
-          <Link to="/docs" className="hover:text-blue-400 transition-colors">Docs</Link>
+          <a href="#" onClick={handleWIPClick} className="hover:text-blue-400 transition-colors">Features</a>
+          <a href="#" onClick={handleWIPClick} className="hover:text-blue-400 transition-colors">Pricing</a>
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="hover:text-blue-400 transition-colors">Dashboard</Link>
@@ -29,6 +34,17 @@ const Header: React.FC = () => {
           )}
         </nav>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
+            <h2 className="text-2xl font-bold mb-4">🚧 Work in Progress 🚧</h2>
+            <p>This feature is coming soon! We're working hard to bring you the best experience.</p>
+            <button onClick={() => setShowModal(false)} className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-colors">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
