@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
         <div className="mt-2">
           <a href="#" className="hover:text-gray-300 mx-2">Privacy Policy</a>
           <a href="#" className="hover:text-gray-300 mx-2">Terms of Service</a>
-          <a href="#" className="hover:text-gray-300 mx-2">Contact Us</a>
+          <a href="mailto:hello@onebutton.run" className="hover:text-gray-300 mx-2">Contact Us</a>
         </div>
       </div>
     </footer>

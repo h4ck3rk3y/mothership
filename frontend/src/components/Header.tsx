@@ -15,8 +15,8 @@ const Header: React.FC = () => {
     <header className="bg-gray-900 text-white py-4 shadow-md">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold flex items-center">
-          <img src="/ufo.png" alt="MotherShip" className="w-10 h-10 mr-2" />
-          MotherShip
+          <img src="/ufo.png" alt="OneButtonRun" className="w-10 h-10 mr-2" />
+          OneButtonRun
         </Link>
         <nav className="flex items-center space-x-6">
           <a href="#" onClick={handleWIPClick} className="hover:text-blue-400 transition-colors">Features</a>
