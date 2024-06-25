@@ -7,6 +7,7 @@ import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import GoogleAnalytics from './components/GoogleAnalytics';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -42,6 +43,7 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
+        <GoogleAnalytics/>
         <div className="flex flex-col min-h-screen bg-gray-900 text-white">
           <Header />
           <main className="flex-grow container mx-auto px-4 py-8">

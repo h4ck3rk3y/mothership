@@ -56,7 +56,7 @@ const IndexPage: React.FC = () => {
             <p>Invite others to use your AI assistant on Telegram.</p>
           </Card>
           <Card title="Affordable Plans">
-            <p>$10/month per bot with included OpenAI credits after your trial.</p>
+            <p>$20/month per bot with included OpenAI credits after your trial.</p>
           </Card>
         </div>
 
@@ -99,8 +99,8 @@ const IndexPage: React.FC = () => {
         {/* Pricing Preview */}
         <div className="mb-16 text-center">
           <h2 className="text-3xl font-bold mb-8">Simple, Transparent Pricing</h2>
-          <p className="text-xl mb-4">$10/month per bot after your 7-day free trial</p>
-          <p className="mb-8">Includes 100 OpenAI API credits monthly. Additional credits available at cost.</p>
+          <p className="text-xl mb-4">$20/month per bot after your 3-day free trial</p>
+          <p className="mb-8">Comes with some free OpenAI Credits. Additional credits available at cost.</p>
           <a href="#" onClick={handleWIPClick} className="text-blue-400 hover:underline">View detailed pricing</a>
         </div>
 
@@ -112,7 +112,7 @@ const IndexPage: React.FC = () => {
               <p>MotherShip is a platform that allows you to create and deploy custom GPT assistants on Telegram without any coding knowledge.</p>
             </Card>
             <Card title="How does the free trial work?">
-              <p>You get full access to all features for 7 days. No credit card required. Cancel anytime.</p>
+              <p>You get full access to all features for 3 days. No credit card required. Cancel anytime.</p>
             </Card>
             <Card title="Can I customize my AI assistant?">
               <p>Yes! You can train your AI on custom data and set specific behaviors and responses.</p>
