@@ -15,6 +15,7 @@ import uuid
 import logging
 from datetime import timedelta
 from flask_cors import CORS
+import stripe
 
 app = Flask(__name__)
 # this probably could use some hardening
@@ -105,6 +106,9 @@ def create_bot():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
+    if not user.subscription_id or (user.trial_end and user.trial_end < datetime.now()):
+        return jsonify({"message": "Active subscription required"}), 403
+
     if user.bot:
         logger.warning(f"User {current_user_id} attempted to create a second bot")
         return jsonify({"message": "You already have a bot"}), 400
@@ -191,6 +195,70 @@ def edit_bot():
         db.session.rollback()
         logger.error(f"Failed to update bot for user {current_user_id}: {str(e)}")
         return jsonify({"message": f"Failed to update bot: {str(e)}"}), 500
+
+
+@app.route("/create-subscription", methods=["POST"])
+@jwt_required()
+def create_subscription():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if user.stripe_customer_id is None:
+        # Create a new Stripe customer
+        customer = stripe.Customer.create(email=user.username)
+        user.stripe_customer_id = customer.id
+        db.session.commit()
+
+    # Create a subscription
+    subscription = stripe.Subscription.create(
+        customer=user.stripe_customer_id,
+        items=[
+            {"price": "price_1PVuPp0377Om5U2sfV3VMezf"}
+        ],  # Replace with your actual price ID
+        trial_period_days=1,
+    )
+
+    user.subscription_id = subscription.id
+    user.trial_end = datetime.now() + timedelta(days=1)
+    db.session.commit()
+
+    return jsonify({"subscription_id": subscription.id}), 200
+
+
+@app.route("/check-subscription", methods=["GET"])
+@jwt_required()
+def check_subscription():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if user.subscription_id:
+        subscription = stripe.Subscription.retrieve(user.subscription_id)
+        return (
+            jsonify(
+                {
+                    "status": subscription.status,
+                    "trial_end": user.trial_end.isoformat() if user.trial_end else None,
+                }
+            ),
+            200,
+        )
+    else:
+        return jsonify({"status": "no_subscription"}), 200
+
+
+# Add a new function to check and expire bots
+def check_and_expire_bots():
+    users_with_expired_trial = User.query.filter(User.trial_end < datetime.now()).all()
+    for user in users_with_expired_trial:
+        if user.subscription_id:
+            subscription = stripe.Subscription.retrieve(user.subscription_id)
+            if subscription.status != "active":
+                # Expire the bot
+                bot = Bot.query.filter_by(user_id=user.id).first()
+                if bot:
+                    # Add logic to stop the bot on Koyeb
+                    bot.status = "EXPIRED"
+                    db.session.commit()
 
 
 if __name__ == "__main__":

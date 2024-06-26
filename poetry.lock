@@ -728,6 +728,21 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "stripe"
+version = "10.0.0"
+description = "Python bindings for the Stripe API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "stripe-10.0.0-py2.py3-none-any.whl", hash = "sha256:48a99472065143de9a304ea34976b163cb6bb1dc6e4cdc1615640aecf41220e3"},
+    {file = "stripe-10.0.0.tar.gz", hash = "sha256:19dbc7edb2521f61cd3afe142318925db945ed0a8ae590d8fd5aed22e1d21e89"},
+]
+
+[package.dependencies]
+requests = {version = ">=2.20", markers = "python_version >= \"3.0\""}
+typing-extensions = {version = ">=4.5.0", markers = "python_version >= \"3.7\""}
+
+[[package]]
 name = "typing-extensions"
 version = "4.12.2"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -790,4 +805,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.9.7 || >3.9.7,<4.0"
-content-hash = "4ef51e74b74f1ca8e6af202e8ace357cb7507000225ca869cdc51a6269321d06"
+content-hash = "f1de2f60a82f91e5fdf871f8c438211bb4079495ed18dd0aee6eb755061a0dc6"
