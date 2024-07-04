@@ -70,7 +70,7 @@ def signup():
     data = request.json
     if User.query.filter_by(username=data["username"]).first():
         logger.info(f"Signup attempt with existing username: {data['username']}")
-        return jsonify({"message": "Username already exists"}), 400
+        return jsonify({"message": "Username already exists please add some numbers"}), 400
 
     hashed_password = generate_password_hash(data["password"])
     new_user = User(username=data["username"], password_hash=hashed_password)
