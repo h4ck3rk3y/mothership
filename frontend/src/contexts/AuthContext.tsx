@@ -5,7 +5,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   login: (username: string, password: string) => Promise<void>;
-  signup: (username: string, password: string, inviteCode: string) => Promise<void>;
+  signup: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -51,9 +51,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signup = async (username: string, password: string, inviteCode: string) => {
+  const signup = async (username: string, password: string) => {
     try {
-      await apiSignup(username, password, inviteCode);
+      await apiSignup(username, password);
       // After successful signup, log the user in
       await login(username, password);
     } catch (error) {

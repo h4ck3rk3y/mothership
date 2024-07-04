@@ -43,9 +43,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
-INVITE_CODE = "BOTS-WILL-TAKEOVER"
-
-
 # Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -71,10 +68,6 @@ class Bot(db.Model):
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.json
-    if data.get("invite_code") != INVITE_CODE:
-        logger.warning(f"Invalid invite code attempt: {data.get('invite_code')}")
-        return jsonify({"message": "Invalid invite code"}), 400
-
     if User.query.filter_by(username=data["username"]).first():
         logger.info(f"Signup attempt with existing username: {data['username']}")
         return jsonify({"message": "Username already exists"}), 400

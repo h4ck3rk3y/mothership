@@ -5,7 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 const SignupPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { signup } = useAuth();
@@ -14,7 +13,7 @@ const SignupPage: React.FC = () => {
     e.preventDefault();
     setError('');
     try {
-      await signup(username, password, inviteCode);
+      await signup(username, password);
       navigate('/dashboard');
     } catch (err) {
       setError('Failed to sign up. Please check your information and try again.');
@@ -44,17 +43,6 @@ const SignupPage: React.FC = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-700 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="inviteCode" className="block mb-1">Invite Code</label>
-          <input
-            type="text"
-            id="inviteCode"
-            value={inviteCode}
-            onChange={(e) => setInviteCode(e.target.value)}
             className="w-full px-3 py-2 bg-gray-700 rounded"
             required
           />

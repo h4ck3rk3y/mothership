@@ -35,8 +35,8 @@ export const login = async (username: string, password: string): Promise<LoginRe
   return response.data;
 };
 
-export const signup = async (username: string, password: string, inviteCode: string): Promise<SignupResponse> => {
-  const response = await api.post<SignupResponse>('/signup', { username, password, invite_code: inviteCode });
+export const signup = async (username: string, password: string): Promise<SignupResponse> => {
+  const response = await api.post<SignupResponse>('/signup', { username, password});
   return response.data;
 };
 
